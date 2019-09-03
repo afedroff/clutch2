@@ -653,10 +653,11 @@ def login_check_file_login(check_input):
                     print("%s Логин [%s] отсутствует или введен некорректно!" % (symbol_bad, login))
                     print(horizontal_equal_line)
                     logging("Проверка логина PPPoE: %s" % login)
-                    continue
+                    # continue
 
         except FileNotFoundError:
             logging("Файл \"%s\" с логинами PPPoE не найден!" % check_input)
+            print(horizontal_equal_line)
             print("%s Файл \"%s\" не найден!" % (symbol_bad, check_input))
 
 
@@ -680,7 +681,7 @@ def mac_check(mac):
     except urllib.error.URLError:
         print("%s www.macvendors.co недоступен!" % symbol_bad)
 
-    print(horizontal_equal_line)
+    # print(horizontal_equal_line)
     logging("Проверка MAC-адреса: %s" % mac)
 
 
@@ -701,11 +702,11 @@ def logging(text='', read=False):
 
     elif read:
         if path.exists(global_log_path):
-            print("%s log: /var/log/clutch/clutch.log" % symbol_log)
+            # print("%s log: /var/log/clutch/clutch.log" % symbol_log)
             system("cat -n %s" % global_log_path)
 
         elif path.exists(local_log_path):
-            print(symbol_log + " log: " + getcwd() + "/clutch.log")
+            # print(symbol_log + " log: " + getcwd() + "/clutch.log")
             system("cat -n %s" % local_log_path)
 
         else:
