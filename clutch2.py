@@ -15,6 +15,7 @@ import urllib.request
 import multiprocessing
 import multiprocessing.dummy
 
+from pysnmp.hlapi import *
 from abc import ABC
 from html.parser import HTMLParser
 
@@ -1109,6 +1110,22 @@ def multi_process_ping(network="192.168.86", ip_start=1, ip_end=100):
 
     print("Доступные хосты из диапазона: %s.%s->%s" % (network, ip_start, ip_end))  # Для отладки
     return list_of_accessible_ip  # Возврат списока доступных хостов
+
+
+# Функции для получения хостнейма в тестовом режиме
+def snmp_getcmd(community, ip, port, oid):
+    snmp_string = next(getCmd(SnmpEngine(),
+                   CommunityData(community),
+                   UdpTransportTarget((ip, port)),
+                   ContextData(),
+                   ObjectType(ObjectIdentity(oid))))
+    return snmp_string
+
+
+def snmp_get_next(community, ip, port, oid):
+    errorIndication, errorStatus, errorIndex, varBinds = next(snmp_getcmd(community, ip, port, oid))
+    for name, val in varBinds:
+        return (val.prettyPrint())
 
 
 if __name__ == '__main__':
