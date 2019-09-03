@@ -667,11 +667,11 @@ def logging(text='', read=False):
         log_string = "[%s] @%s: %s\n" % (time.strftime("%H:%M:%S %d-%m-%Y"), getpass.getuser(), text)
         try:
             log_file = open(global_log_path, "a+")
-            print("%s /var/log/clutch/clutch.log" % symbol_log)
+            # print("%s /var/log/clutch/clutch.log" % symbol_log)
 
         except PermissionError:  # если нет доступа к папке /var/log/clutch/
             log_file = open(local_log_path, "a+")
-            print("%s /home/%s/clutch.log" % (symbol_log, getpass.getuser()))
+            # print("%s /home/%s/clutch.log" % (symbol_log, getpass.getuser()))
 
         log_file.writelines(log_string)
         log_file.close()
