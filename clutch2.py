@@ -401,13 +401,13 @@ def telnet_or_ssh_this(num_in, file_name, ssh=False):  # Для подключе
                     pass
 
                 # Формируем блок вывода для подключения к устройству
-                ready_string = green_string_start \
-                               + 'Login/Password/Enable:\n' \
+                ready_string = green_string_start + 'Login/Password/Enable:\n' \
                                + '-' * 22 + '\n' + string_end \
                                + hidden_string_start + login + '\n' \
                                + password + '\n' + '\x1b[0m' \
-                               + green_string_start \
+                               + green_string_start\
                                + '-' * 22 + string_end
+
                 print(ready_string)
 
             else:  # Если enable есть:
@@ -470,7 +470,7 @@ def telnet_or_ssh_this(num_in, file_name, ssh=False):  # Для подключе
     print(horizontal_equal_line)
 
 
-def date_to_num(day='', month='', year='', time_c='', day_of_week=''):
+def date_to_num(day='', month='', year='', time_c=''):
     list_months = ["Jan", "Feb", "Mar",
                    "Apr", "May", "Jun",
                    "Jul", "Aug", "Sep",
