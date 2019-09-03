@@ -1087,7 +1087,6 @@ def multi_process_ping(network="192.168.86", ip_start=1, ip_end=100):
 
 
 if __name__ == '__main__':
-    # ВНИМАНИЕ! СКРИПТ В РЕЖИМЕ ОТЛАДКИ!
     try:
         logging("Запуск clutch2")
         main()
