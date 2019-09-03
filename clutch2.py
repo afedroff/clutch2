@@ -26,7 +26,7 @@ try:
 except ModuleNotFoundError:
     pass
 
-PROGRAM_VERSION = '4.0'
+PROGRAM_VERSION = '4.0.2 alpha'
 
 symbol_good = "\x1b[92m[+]\x1b[0m"
 symbol_bad = "\x1b[91m[!]\x1b[0m"
@@ -125,7 +125,7 @@ IP адрес | Название устройства | Логин | Парол�
     Clutch2 (Linux Networking) %s
     ''' % PROGRAM_VERSION
 
-    help_string_for_cycle = '''%s\n%s
+    help_string_for_cycle = '''%s
                          h : Вызвать справку (это сообщение)
                          v : Информация о версии программы
                          w : Добавить новую строку в файл
@@ -146,7 +146,7 @@ IP адрес | Название устройства | Логин | Парол�
              telnet [адрес/имя]   : Ручной ввод ip адреса (если адреса нет в списке)
                ping [адрес/имя]   : Проверка доступности хоста
          traceroute [адрес/имя]   : Трассировка маршрута до узла
-%s''' % (horizontal_equal_line, horizontal_help_line, horizontal_help_line)
+%s''' % (horizontal_help_line, horizontal_help_line)
 
     return [help_string, version_string, help_string_for_cycle]
 
@@ -608,9 +608,12 @@ def login_check(login):
         for attempt in range(len(login_attemps)):
             print(login_attemps[attempt])
 
+        ##################################
+        # print(horizontal_equal_line) if len(login_attemps) > 1 else ''
         print(horizontal_equal_line)
+        ##################################
 
-    elif len(login_attemps) == 0 and session_flag == 1:
+    elif len(login_attemps) == 0 and session_flag:
         print("%s Попытки авторизации : \x1b[90m~\x1b[0m" % symbol_unknown)
         print(horizontal_equal_line)
 
@@ -1079,7 +1082,8 @@ def main():
             print(help_me)
             break
 
-        print(horizontal_equal_line, end='\r')
+        # print(horizontal_equal_line, end='\r')
+        print(symbol_good, end='\r')
         input()
 
 
@@ -1112,20 +1116,22 @@ def multi_process_ping(network="192.168.86", ip_start=1, ip_end=100):
     return list_of_accessible_ip  # Возврат списока доступных хостов
 
 
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # Функции для получения хостнейма в тестовом режиме
-def snmp_getcmd(community, ip, port, oid):
-    snmp_string = next(getCmd(SnmpEngine(),
-                   CommunityData(community),
-                   UdpTransportTarget((ip, port)),
-                   ContextData(),
-                   ObjectType(ObjectIdentity(oid))))
-    return snmp_string
-
-
-def snmp_get_next(community, ip, port, oid):
-    errorIndication, errorStatus, errorIndex, varBinds = next(snmp_getcmd(community, ip, port, oid))
-    for name, val in varBinds:
-        return (val.prettyPrint())
+# def snmp_getcmd(community, ip, port, oid):
+#     snmp_string = next(getCmd(SnmpEngine(),
+#                    CommunityData(community),
+#                    UdpTransportTarget((ip, port)),
+#                    ContextData(),
+#                    ObjectType(ObjectIdentity(oid))))
+#     return snmp_string
+#
+#
+# def snmp_get_next(community, ip, port, oid):
+#     errorIndication, errorStatus, errorIndex, varBinds = next(snmp_getcmd(community, ip, port, oid))
+#     for name, val in varBinds:
+#         return (val.prettyPrint())
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 
 if __name__ == '__main__':
