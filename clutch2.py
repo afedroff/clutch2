@@ -522,10 +522,12 @@ def login_check(login):
 
         parse_auth = MyParser()
 
-        ####################################################################################
-        print("%s Проверка логина      : \033[32m%s\x1b[0m" % (symbol_good, login) + " " * 10)
-        ####################################################################################
-        
+        color_login = "\033[2;32m%s\x1b[0m" % login if "Session state : active" in html_split else login
+        print("%s Проверка логина     : %s" % (symbol_good, color_login) + " " * 10)
+
+        # Основная строка, раскомментировать!
+        # print("%s Проверка логина     : \033[2;32m%s\x1b[0m" % (symbol_good, login) + " " * 10)
+
         # Парсинг данных
         for line in range(len(html_split)):
             if "SPEED" in html_split[line]:  # Скорость сессии
