@@ -1,5 +1,5 @@
 # clutch2
-New vision of Telnet and SSH client
+Новое видение клиента Telnet и SSH
 
 Консольная альтернатива putty, SecureCRT и подобных эмуляторов терминала.
 Для работы требуется стандартный терминал linux.
