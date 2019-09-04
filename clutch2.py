@@ -554,18 +554,27 @@ def login_check(login):
     # Проверка и вывод количества попыток авторизации и правильности введенного пароля
     for attempt in range(len(list_of_auth)):
         if "Login OK:" in list_of_auth[attempt] or "Login incorrect" in list_of_auth[attempt]:
+
+            # ПОИЧИНИТЬ ДАТУ
             day = str(list_of_auth[attempt][:41]).split(" ")[2]
             month = str(list_of_auth[attempt][:41]).split(" ")[1]
             year = str(list_of_auth[attempt][:41]).split(" ")[4]
             clock = str(list_of_auth[attempt][:41]).split(" ")[3]
+            port = str(list_of_auth[attempt]).split('port')[1][:-1]
 
             if "Login OK:" in list_of_auth[attempt]:
-                login_attemps.append("%s %s : Авторизация : \x1b[32mPASS\x1b[0m [%+2s]" %
-                                     (symbol_good, date_to_num(day, month, year, clock), attempt - 1))
+                login_attemps.append("%s %s : Авторизация : \x1b[32mPASS\x1b[0m [\33[32m%+2s\33[0m ] :%s" %
+                                     (symbol_good,
+                                      date_to_num(day, month, year, clock),
+                                      attempt - 1,
+                                      port))
 
             elif "Login incorrect" in list_of_auth[attempt]:
-                login_attemps.append("%s (\x1b[31m%+2s\x1b[0m) %s : Авторизация : \x1b[31mFAIL\x1b[0m" %
-                                     (symbol_bad, attempt - 1, date_to_num(day, month, year, clock)))
+                login_attemps.append("%s %s : Авторизация : \x1b[31mFAIL\x1b[0m [\33[31m%+2s\33[0m ] :%s" %
+                                     (symbol_bad,
+                                      date_to_num(day, month, year, clock),
+                                      attempt - 1,
+                                      port))
 
     # Проверка и вывод статуса сессии
     if "active" in session_states and int(max_num(connection_speed)[:-6]) > 0:
@@ -1116,28 +1125,27 @@ def multi_process_ping(network="192.168.86", ip_start=1, ip_end=100):
     return list_of_accessible_ip  # Возврат списока доступных хостов
 
 
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # Функции для получения хостнейма в тестовом режиме
-# def snmp_getcmd(community, ip, port, oid):
-#     snmp_string = next(getCmd(SnmpEngine(),
-#                    CommunityData(community),
-#                    UdpTransportTarget((ip, port)),
-#                    ContextData(),
-#                    ObjectType(ObjectIdentity(oid))))
-#     return snmp_string
-#
-#
-# def snmp_get_next(community, ip, port, oid):
-#     errorIndication, errorStatus, errorIndex, varBinds = next(snmp_getcmd(community, ip, port, oid))
-#     for name, val in varBinds:
-#         return (val.prettyPrint())
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+def snmp_getcmd(community, ip, port, oid):
+    snmp_string = next(getCmd(SnmpEngine(),
+                   CommunityData(community),
+                   UdpTransportTarget((ip, port)),
+                   ContextData(),
+                   ObjectType(ObjectIdentity(oid))))
+    return snmp_string
+
+
+def snmp_get_next(community, ip, port, oid):
+    errorIndication, errorStatus, errorIndex, varBinds = next(snmp_getcmd(community, ip, port, oid))
+    for name, val in varBinds:
+        return (val.prettyPrint())
 
 
 if __name__ == '__main__':
     try:
         logging("Запуск clutch2")
-        main()
+        # main()
+        login_check("77865651149")
 
     except IndexError:
         print(help_and_about()[0])
