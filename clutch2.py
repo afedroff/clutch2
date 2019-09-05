@@ -1111,7 +1111,7 @@ def ping_test(ip):
     # return ip if ping_result == 0 else None  # После отладки восстановить
 
 # В 3.5 раза быстрее обычного пинга
-def multi_process_ping(network="192.168.86", ip_start=1, ip_end=100):
+def multi_process_ping(network="192.168.86", ip_start=1, ip_end=50):
     ip_list_for_ping = []
 
     for octet in range(ip_start, ip_end):
@@ -1124,7 +1124,7 @@ def multi_process_ping(network="192.168.86", ip_start=1, ip_end=100):
 
     list_of_accessible_ip = [ip for ip in result if ip is not None]
 
-    print("Доступные хосты из диапазона: %s.%s->%s" % (network, ip_start, ip_end))  # Для отладки
+    # print("Доступные хосты из диапазона: %s.%s->%s" % (network, ip_start, ip_end))  # Для отладки
     return list_of_accessible_ip  # Возврат списока доступных хостов
 
 # Функции для получения хостнейма в тестовом режиме
@@ -1144,9 +1144,16 @@ def snmp_get_next(community, ip, port, oid):
 
 
 
+
 if __name__ == '__main__':
     try:
-        main()
+        print("Доступные хосты:")
+        list_ip = multi_process_ping()
+        print(horizontal_equal_line)
+        for i, ip in enumerate(list_ip):
+            print(i+1, ip)
+        print(horizontal_equal_line)
+        # main()
 
     except IndexError:
         print(help_and_about()[0])
