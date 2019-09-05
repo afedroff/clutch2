@@ -521,12 +521,13 @@ def login_check(login):
                 list_of_auth.append(data)
 
         parse_auth = MyParser()
+        login_good_for_print = "\033[92m" + login + "\033[0m"
+        login_unknown_for_print = "\033[90m" + login + "\033[0m"
 
-        color_login = "\033[2;32m%s\x1b[0m" % login if "Session state : active" in html_split else login
-        print("%s Проверка логина     : %s" % (symbol_good, color_login) + " " * 10)
-
-        # Основная строка, раскомментировать!
-        # print("%s Проверка логина     : \033[2;32m%s\x1b[0m" % (symbol_good, login) + " " * 10)
+        if "Session state : active" in result:
+            print("%s Проверка логина     : %s" % (symbol_good, login_good_for_print) + " " * 10)
+        else:
+            print("%s Проверка логина     : %s" % (symbol_unknown, login_unknown_for_print) + " " * 10)
 
         # Парсинг данных
         for line in range(len(html_split)):
@@ -811,8 +812,11 @@ def main():
                         try:
                             num_of_device = int(find_some.split(' ')[1]) - 1
                             ip_address = check_file_string(num_of_device, sys.argv[1])[0]
+                            name_of_device = check_file_string(num_of_device, sys.argv[1])[1]
+
                             print('%s snmpwalk -v 2c -c inity2016 %s' % (symbol_good, ip_address))
-                            logging("Проверка SNMP: %s" % ip_address)
+                            logging("Проверка SNMP: \"%s %s\"" % (ip_address, name_of_device))
+
                             os.system('snmpwalk -v 2c -c inity2016 %s' % ip_address)
                             continue
 
@@ -1086,59 +1090,58 @@ def main():
         print(symbol_good, end='\r')
         input()
 
-######################################################################################################
-
-def ping_test(ip):
-    ping_result = os.system("ping -w 1 -c 4 -i 0.2 %s > /dev/null" % ip)
-    if ping_result == 0:
-        print("[\x1b[32m  OK  \x1b[0m] %s   " % ip, end='\r')
-        return ip
-    else:
-        print("[\x1b[31m FAIL \x1b[0m] %s   " % ip, end='\r')
-        return None
-    # return ip if ping_result == 0 else None  # После отладки восстановить
-
-
-def multi_process_ping(network="192.168.86", ip_start=1, ip_end=100):
-    # В 3.5 раза быстрее обычного пинга
-    ip_list_for_ping = []
-
-    for octet in range(ip_start, ip_end):
-        ip_list_for_ping.append(network + '.' + str(octet))
-
-    ping_process = multiprocessing.dummy.Pool()
-    result = ping_process.map(ping_test, ip_list_for_ping)
-    ping_process.close()
-    ping_process.join()
-
-    list_of_accessible_ip = [ip for ip in result if ip is not None]
-
-    print("Доступные хосты из диапазона: %s.%s->%s" % (network, ip_start, ip_end))  # Для отладки
-    return list_of_accessible_ip  # Возврат списока доступных хостов
-
-
-# Функции для получения хостнейма в тестовом режиме
-def snmp_getcmd(community, ip, port, oid):
-    snmp_string = next(getCmd(SnmpEngine(),
-                   CommunityData(community),
-                   UdpTransportTarget((ip, port)),
-                   ContextData(),
-                   ObjectType(ObjectIdentity(oid))))
-    return snmp_string
-
-
-def snmp_get_next(community, ip, port, oid):
-    errorIndication, errorStatus, errorIndex, varBinds = next(snmp_getcmd(community, ip, port, oid))
-    for name, val in varBinds:
-        return (val.prettyPrint())
 
 ######################################################################################################
+# def ping_test(ip):
+#     ping_result = os.system("ping -w 1 -c 4 -i 0.2 %s > /dev/null" % ip)
+#     if ping_result == 0:
+#         print("[\x1b[32m  OK  \x1b[0m] %s   " % ip, end='\r')
+#         return ip
+#     else:
+#         print("[\x1b[31m FAIL \x1b[0m] %s   " % ip, end='\r')
+#         return None
+#     # return ip if ping_result == 0 else None  # После отладки восстановить
+#
+#
+# def multi_process_ping(network="192.168.86", ip_start=1, ip_end=100):
+#     # В 3.5 раза быстрее обычного пинга
+#     ip_list_for_ping = []
+#
+#     for octet in range(ip_start, ip_end):
+#         ip_list_for_ping.append(network + '.' + str(octet))
+#
+#     ping_process = multiprocessing.dummy.Pool()
+#     result = ping_process.map(ping_test, ip_list_for_ping)
+#     ping_process.close()
+#     ping_process.join()
+#
+#     list_of_accessible_ip = [ip for ip in result if ip is not None]
+#
+#     print("Доступные хосты из диапазона: %s.%s->%s" % (network, ip_start, ip_end))  # Для отладки
+#     return list_of_accessible_ip  # Возврат списока доступных хостов
+#
+#
+# # Функции для получения хостнейма в тестовом режиме
+# def snmp_getcmd(community, ip, port, oid):
+#     snmp_string = next(getCmd(SnmpEngine(),
+#                    CommunityData(community),
+#                    UdpTransportTarget((ip, port)),
+#                    ContextData(),
+#                    ObjectType(ObjectIdentity(oid))))
+#     return snmp_string
+#
+#
+# def snmp_get_next(community, ip, port, oid):
+#     errorIndication, errorStatus, errorIndex, varBinds = next(snmp_getcmd(community, ip, port, oid))
+#     for name, val in varBinds:
+#         return (val.prettyPrint())
+######################################################################################################
+
 
 if __name__ == '__main__':
     try:
         logging("Запуск clutch2")
         main()
-        # login_check("77865651149")
 
     except IndexError:
         print(help_and_about()[0])
