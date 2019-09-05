@@ -1,21 +1,22 @@
 #!/usr/bin/python3.6
 # -*- coding: utf-8 -*-
 
+import os
 import sys
 import time
 import json
 import codecs
 import random
-import getpass  # Определение текущего пользователя
-import pyperclip  # Для буфера обмена
-import http.client  # Для проверки на нулевой логин
+import getpass
+import pyperclip
+import http.client
 import urllib.error
 import urllib.request
-
+# import multiprocessing
+# import multiprocessing.dummy
+#
+# from pysnmp.hlapi import *
 from abc import ABC
-from os import path    # Проверка пути
-from os import system  # Системный вызов
-from os import getcwd  # Текущая директория
 from html.parser import HTMLParser
 
 try:
@@ -25,7 +26,7 @@ try:
 except ModuleNotFoundError:
     pass
 
-PROGRAM_VERSION = '4.0'
+PROGRAM_VERSION = '4.0.2 alpha'
 
 symbol_good = "\x1b[92m[+]\x1b[0m"
 symbol_bad = "\x1b[91m[!]\x1b[0m"
@@ -97,34 +98,27 @@ IP адрес | Название устройства | Логин | Парол�
 '''
 
     version_string = '''
-    MIT License
-    
-    Copyright (c) 2019 citizenon
-    
-    Copyright (c) 2019 citizenon
+    Copyright (c) %s citizen0ne
 
-    Permission is hereby granted, free of charge, to any person obtaining a copy of this software 
-    and associated documentation files (the "Software"), to deal in the Software without restriction, 
-    including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
-    and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, 
-    subject to the following conditions:
+    Данная лицензия разрешает лицам, получившим копию данного программного обеспечения и сопутствующей документации 
+    (в дальнейшем именуемыми «Программное обеспечение»), безвозмездно использовать Программное обеспечение 
+    без ограничений, включая неограниченное право на использование, копирование, изменение, слияние, публикацию, 
+    распространение, сублицензирование и/или продажу копий Программного обеспечения, а также лицам, которым 
+    предоставляется данное Программное обеспечение, при соблюдении следующих условий:
 
-    The above copyright notice and this permission notice shall be included in all copies 
-    or substantial portions of the Software.
+    Указанное выше уведомление об авторском праве и данные условия должны быть включены во все копии или значимые части 
+    данного Программного обеспечения.
 
-    The above copyright notice and this permission notice shall be included in all copies 
-    or substantial portions of the Software.
-
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED 
-    TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
-    IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
-    WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION 
-    WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+    ДАННОЕ ПРОГРАММНОЕ ОБЕСПЕЧЕНИЕ ПРЕДОСТАВЛЯЕТСЯ «КАК ЕСТЬ», БЕЗ КАКИХ-ЛИБО ГАРАНТИЙ, ЯВНО ВЫРАЖЕННЫХ ИЛИ 
+    ПОДРАЗУМЕВАЕМЫХ, ВКЛЮЧАЯ ГАРАНТИИ ТОВАРНОЙ ПРИГОДНОСТИ, СООТВЕТСТВИЯ ПО ЕГО КОНКРЕТНОМУ НАЗНАЧЕНИЮ И ОТСУТСТВИЯ 
+    НАРУШЕНИЙ, НО НЕ ОГРАНИЧИВАЯСЬ ИМИ. НИ В КАКОМ СЛУЧАЕ АВТОРЫ ИЛИ ПРАВООБЛАДАТЕЛИ НЕ НЕСУТ ОТВЕТСТВЕННОСТИ 
+    ПО КАКИМ-ЛИБО ИСКАМ, ЗА УЩЕРБ ИЛИ ПО ИНЫМ ТРЕБОВАНИЯМ, В ТОМ ЧИСЛЕ, ПРИ ДЕЙСТВИИ КОНТРАКТА, ДЕЛИКТЕ ИЛИ ИНОЙ 
+    СИТУАЦИИ, ВОЗНИКШИМ ИЗ-ЗА ИСПОЛЬЗОВАНИЯ ПРОГРАММНОГО ОБЕСПЕЧЕНИЯ ИЛИ ИНЫХ ДЕЙСТВИЙ С ПРОГРАММНЫМ ОБЕСПЕЧЕНИЕМ. 
 
     Clutch2 (Linux Networking) %s
-    ''' % PROGRAM_VERSION
+    ''' % (2019, PROGRAM_VERSION)
 
-    help_string_for_cycle = '''%s\n%s
+    help_string_for_cycle = '''%s
                          h : Вызвать справку (это сообщение)
                          v : Информация о версии программы
                          w : Добавить новую строку в файл
@@ -145,13 +139,13 @@ IP адрес | Название устройства | Логин | Парол�
              telnet [адрес/имя]   : Ручной ввод ip адреса (если адреса нет в списке)
                ping [адрес/имя]   : Проверка доступности хоста
          traceroute [адрес/имя]   : Трассировка маршрута до узла
-%s''' % (horizontal_equal_line, horizontal_help_line, horizontal_help_line)
+%s''' % (horizontal_help_line, horizontal_help_line)
 
     return [help_string, version_string, help_string_for_cycle]
 
 
 def dev_list(file_name):
-    if path.exists(file_name):  # Если файл существует - открываем и читаем его
+    if os.path.exists(file_name):  # Если файл существует - открываем и читаем его
         with open(file_name, 'r') as file_read:
             file_line = file_read.read().splitlines()
         return file_line
@@ -244,8 +238,8 @@ def flush(file_name):  # Очистка файла от пустых строк
     with open('tmp.txt', 'a') as last_line:  # Это для добавления одной пустой строки в конец файла
         last_line.write('\n')
 
-    system('rm %s' % file_name)  # Чтобы не заморачиваться - удаляем исходный файл...
-    system('mv tmp.txt %s' % file_name)  # ...и тут же переименовываем временный, присваивая название старого файла.
+    os.system('rm %s' % file_name)  # Чтобы не заморачиваться - удаляем исходный файл...
+    os.system('mv tmp.txt %s' % file_name)  # ...и тут же переименовываем временный, присваивая название старого файла.
 
 
 def table(file_name):  # Отрисовка таблицы
@@ -354,7 +348,7 @@ def search_device(searching_string, file_name):  # Поиск устройств
             continue
 
     if len(list_of_devices_found) != 0:
-        system("clear")
+        os.system("clear")
         print("%s Поиск: \"%s\" в \"%s\":" % (symbol_good, searching_string, file_name))
         print(horizontal_dash_line)
         print(' Номер   | SSH | \x1b[36mIP-адрес\x1b[0m        |  \x1b[33mНазвание\x1b[0m\n' + plus_line_for_search)
@@ -407,11 +401,9 @@ def telnet_or_ssh_this(num_in, file_name, ssh=False):  # Для подключе
 
                 # Формируем блок вывода для подключения к устройству
                 ready_string = green_string_start + 'Login/Password/Enable:\n' \
-                               + '-' * 22 + '\n' + string_end \
-                               + hidden_string_start + login + '\n' \
-                               + password + '\n' + '\x1b[0m' \
-                               + green_string_start\
-                               + '-' * 22 + string_end
+                               + '-' * 22 + '\n' + string_end + hidden_string_start \
+                               + login + '\n' + password + '\n' + '\x1b[0m' \
+                               + green_string_start + '-' * 22 + string_end
 
                 print(ready_string)
 
@@ -452,7 +444,7 @@ def telnet_or_ssh_this(num_in, file_name, ssh=False):  # Для подключе
                         if login != '-' and password != '-':
                             print(horizontal_equal_line)
                             print('%s ssh %s@%s -p %s\n' % (symbol_good, login, ip_address, ssh_port))
-                            system('ssh %s@%s -p %s' % (login, ip_address, ssh_port))
+                            os.system('ssh %s@%s -p %s' % (login, ip_address, ssh_port))
 
                     elif not dev_list(file_name)[num - 1].split(' | ')[4][5:].isdigit():
                         pass
@@ -461,7 +453,7 @@ def telnet_or_ssh_this(num_in, file_name, ssh=False):  # Для подключе
             elif not ssh:  # Если Telnet
                 print(horizontal_equal_line)
                 logging("Соединение Telnet: \"%s %s\" ОТКРЫТО" % (ip_address, name_of_device))
-                system('telnet %s' % ip_address)
+                os.system('telnet %s' % ip_address)
                 logging("Соединение Telnet: \"%s %s\" ЗАКРЫТО" % (ip_address, name_of_device))
 
         else:
@@ -514,7 +506,7 @@ def login_check(login):
 
     # Обе части ссылки для проверки логина берем из файла
     # Жесткая привязка к пути
-    if path.isfile(file_with_link):
+    if os.path.isfile(file_with_link):
         with open(file_with_link, "r") as f:
             url_file = f.read().splitlines()
 
@@ -529,9 +521,15 @@ def login_check(login):
                 list_of_auth.append(data)
 
         parse_auth = MyParser()
-        print("%s Логин абонента      : \033[32m%s\x1b[0m" % (symbol_good, login) + " " * 10)
+        login_good_for_print = "\033[92m" + login + "\033[0m"
+        login_unknown_for_print = "\033[90m" + login + "\033[0m"
 
-        # Парсинг
+        if "Session state : active" in result:
+            print("%s Проверка логина     : %s" % (symbol_good, login_good_for_print) + " " * 10)
+        else:
+            print("%s Проверка логина     : %s" % (symbol_unknown, login_unknown_for_print) + " " * 10)
+
+        # Парсинг данных
         for line in range(len(html_split)):
             if "SPEED" in html_split[line]:  # Скорость сессии
                 connection_speed.append(html_split[line].split(" : ")[1])
@@ -555,18 +553,23 @@ def login_check(login):
     # Проверка и вывод количества попыток авторизации и правильности введенного пароля
     for attempt in range(len(list_of_auth)):
         if "Login OK:" in list_of_auth[attempt] or "Login incorrect" in list_of_auth[attempt]:
-            day = str(list_of_auth[attempt][:41]).split(" ")[2]
+            day = str(list_of_auth[attempt][:41]).split(" ")[3]
             month = str(list_of_auth[attempt][:41]).split(" ")[1]
-            year = str(list_of_auth[attempt][:41]).split(" ")[4]
-            clock = str(list_of_auth[attempt][:41]).split(" ")[3]
+            year = str(list_of_auth[attempt][:41]).split(" ")[5]
+            clock = str(list_of_auth[attempt][:41]).split(" ")[4]
+            port = str(list_of_auth[attempt]).split('port')[1][:-1]
 
             if "Login OK:" in list_of_auth[attempt]:
-                login_attemps.append("%s %s : Авторизация : \x1b[32mPASS\x1b[0m [%+2s]" %
-                                     (symbol_good, date_to_num(day, month, year, clock), attempt - 1))
+                login_attemps.append("%s %s : Авторизация : \x1b[92mPASS\x1b[0m [%+2s ] : Порт :\33[92m%s\33[0m" %
+                                     (symbol_good,
+                                      date_to_num(day, month, year, clock),
+                                      attempt - 1, port))
 
             elif "Login incorrect" in list_of_auth[attempt]:
-                login_attemps.append("%s (\x1b[31m%+2s\x1b[0m) %s : Авторизация : \x1b[31mFAIL\x1b[0m" %
-                                     (symbol_bad, attempt - 1, date_to_num(day, month, year, clock)))
+                login_attemps.append("%s %s : Авторизация : \x1b[91mFAIL\x1b[0m [%+2s ] : Порт :\33[91m%s\33[0m" %
+                                     (symbol_bad,
+                                      date_to_num(day, month, year, clock),
+                                      attempt - 1, port))
 
     # Проверка и вывод статуса сессии
     if "active" in session_states and int(max_num(connection_speed)[:-6]) > 0:
@@ -582,13 +585,13 @@ def login_check(login):
         print("%s Абонентский порт    : \x1b[32m%s\x1b[0m" % (symbol_good, nas_port_id[0]))
 
     else:
-        print("%s Абонентский порт    : \x1b[90mНет данных\x1b[0m" % symbol_unknown)
+        print("%s Абонентский порт    : \x1b[90m~\x1b[0m" % symbol_unknown)
 
     # Проверка и вывод IP адреса
     if len(ip_address) != 0:
         print("%s Полученный IP-адрес : \x1b[32m%s\x1b[0m" % (symbol_good, ip_address[0]))
     else:
-        print("%s Полученный IP-адрес : \x1b[90mНет данных\x1b[0m" % symbol_unknown)
+        print("%s Полученный IP-адрес : \x1b[90m~\x1b[0m" % symbol_unknown)
 
     # Проверка и вывод скорости соединения
     if int(max_num(connection_speed)[:-6]) != 0:
@@ -611,7 +614,7 @@ def login_check(login):
 
         print(horizontal_equal_line)
 
-    elif len(login_attemps) == 0 and session_flag == 1:
+    elif len(login_attemps) == 0 and session_flag:
         print("%s Попытки авторизации : \x1b[90m~\x1b[0m" % symbol_unknown)
         print(horizontal_equal_line)
 
@@ -701,13 +704,13 @@ def logging(text='', read=False):
         log_file.close()
 
     elif read:
-        if path.exists(global_log_path):
+        if os.path.exists(global_log_path):
             # print("%s log: /var/log/clutch/clutch.log" % symbol_log)
-            system("cat -n %s" % global_log_path)
+            os.system("cat -n %s" % global_log_path)
 
-        elif path.exists(local_log_path):
-            # print(symbol_log + " log: " + getcwd() + "/clutch.log")
-            system("cat -n %s" % local_log_path)
+        elif os.path.exists(local_log_path):
+            # print(symbol_log + " log: " + os.getcwd() + "/clutch.log")
+            os.system("cat -n %s" % local_log_path)
 
         else:
             print("%s Лог файл не найден!" % symbol_bad)
@@ -737,7 +740,7 @@ def main():
 
             else:
                 if str(sys.argv[1]).split('.')[1] == 'txt':
-                    system('clear')
+                    os.system('clear')
                     table(sys.argv[1])
                     find_some = ''
                     my_device = ''
@@ -766,7 +769,7 @@ def main():
                             flush(sys.argv[1])
                             print('%s Файл очищен!' % symbol_good)
                             logging("Удаление пустых и некорректных строк из файла: \"%s/%s\""
-                                    % (getcwd(), sys.argv[1]))
+                                    % (os.getcwd(), sys.argv[1]))
 
                     # Запись новой строки в файл
                     elif find_some == 'w':
@@ -792,7 +795,7 @@ def main():
                     elif len(find_some.split(' ')) == 2 and find_some.split(' ')[0] == 'cat':
                         print(horizontal_equal_line)
                         logging("Просмотр файла: \"%s\"" % find_some.split(' ')[1])
-                        system("cat -n %s" % find_some.split(' ')[1])
+                        os.system("cat -n %s" % find_some.split(' ')[1])
 
                     # SSH
                     elif find_some.split(' ')[0] == 's':
@@ -809,9 +812,12 @@ def main():
                         try:
                             num_of_device = int(find_some.split(' ')[1]) - 1
                             ip_address = check_file_string(num_of_device, sys.argv[1])[0]
+                            name_of_device = check_file_string(num_of_device, sys.argv[1])[1]
+
                             print('%s snmpwalk -v 2c -c inity2016 %s' % (symbol_good, ip_address))
-                            logging("Проверка SNMP: %s" % ip_address)
-                            system('snmpwalk -v 2c -c inity2016 %s' % ip_address)
+                            logging("Проверка SNMP: \"%s %s\"" % (ip_address, name_of_device))
+
+                            os.system('snmpwalk -v 2c -c inity2016 %s' % ip_address)
                             continue
 
                         except IndexError:
@@ -830,7 +836,7 @@ def main():
                             logging("Проверка ping устройства: \"%s %s\"" % (ip_address, name_of_device))
                             print(horizontal_equal_line)
                             print('%s ping %s' % (symbol_good, ip_address))
-                            system('ping %s -i 0.2 | grep time=' % ip_address)
+                            os.system('ping %s -i 0.2 | grep time=' % ip_address)
 
                         except IndexError:
                             print(help_cycle)
@@ -847,13 +853,13 @@ def main():
                     elif find_some.split(' ')[0] == 'ping':
                         logging("Команда ping: \"%s\"" % find_some)
                         print(horizontal_equal_line)
-                        system(find_some)
+                        os.system(find_some)
 
                     # Трассировка маршрута
                     elif find_some.split(' ')[0] == 'traceroute':
                         logging("Команда traceroute: \"%s\"" % find_some)
                         print()
-                        system(find_some)
+                        os.system(find_some)
 
                     # Быстрый поиск + SSH
                     elif find_some.split(' ')[0] == 'f' and len(find_some) > 2:
@@ -883,7 +889,7 @@ def main():
                     # Ручной телнет
                     elif find_some.split(' ')[0] == 'telnet':
                         print()
-                        system(find_some)
+                        os.system(find_some)
 
                     elif find_some.split(' ')[0] == 'enum':
                         cool = input('%s IP enumerate?: ' % symbol_question)
@@ -903,13 +909,13 @@ def main():
 
                     elif find_some.split(' ')[0] == 'flog':
                         logging("Просмотр лога в режиме мониторинга")
-                        system("tail -f -n 1 %s | nl" % global_log_path)
+                        os.system("tail -f -n 1 %s | nl" % global_log_path)
                         continue
 
                     # посмотреть содержимое текущей директории
                     elif find_some.split(' ')[0] == 'ls':
                         print(horizontal_equal_line)
-                        system("ls -alh --color=auto")
+                        os.system("ls -alh --color=auto")
                         logging("Просмотр содержимого директории с программой")
 
                     # Проверка логина
@@ -934,7 +940,7 @@ def main():
 
         elif len(sys.argv) == 3:  # Если аргументов 3
             if sys.argv[2] == '-f' or sys.argv[2] == '--find':  # Запуск программы в режиме поиска
-                system('clear')
+                os.system('clear')
                 name_of_file = sys.argv[1]
                 table(name_of_file)
 
@@ -980,7 +986,7 @@ def main():
                 # Запись в файл
                 if write_string != '' and ' | ' in write_string:
                     write_file(write_string, name_of_file)
-                    system("clear")
+                    os.system("clear")
                     table(name_of_file)
                     print("%s Запись успешно добавлена в файл \"%s\"" % (symbol_good, name_of_file))
                     logging("Добавление новой строки в файл: \"%s\"" % name_of_file)
@@ -997,11 +1003,11 @@ def main():
                 are_you_sure = input('%s Очистить файл от пустых строк? [y/n]: ' % symbol_question)
 
                 if are_you_sure == 'y' and str(sys.argv[1]).split('.')[1] == 'txt':
-                    system("clear")
+                    os.system("clear")
                     flush(sys.argv[1])
                     table(sys.argv[1])
                     print("%s Файл очищен!" % symbol_good)
-                    logging("Удаление пустых и некорректных строк из файла \"%s/%s\"" % (getcwd(), sys.argv[1]))
+                    logging("Удаление пустых и некорректных строк из файла \"%s/%s\"" % (os.getcwd(), sys.argv[1]))
                     break
 
                 else:
@@ -1015,7 +1021,7 @@ def main():
             # Быстрое подключение telnet по номеру в списке
             elif str(sys.argv[1]).split('.')[1] == 'txt':
                 try:
-                    system("clear")
+                    os.system("clear")
                     number_of_device = int(sys.argv[2])
                     name_of_file = sys.argv[1]
                     telnet_or_ssh_this(number_of_device, name_of_file)
@@ -1033,7 +1039,7 @@ def main():
             name_of_file = sys.argv[1]
 
             if sys.argv[2] == '-f' or sys.argv[2] == '--find':
-                system('clear')
+                os.system('clear')
                 request = sys.argv[3]
                 search_device(request, name_of_file)
 
@@ -1080,8 +1086,56 @@ def main():
             print(help_me)
             break
 
-        print(horizontal_equal_line, end='\r')
+        # print(horizontal_equal_line, end='\r')
+        print(symbol_good, end='\r')
         input()
+
+
+######################################################################################################
+# def ping_test(ip):
+#     ping_result = os.system("ping -w 1 -c 4 -i 0.2 %s > /dev/null" % ip)
+#     if ping_result == 0:
+#         print("[\x1b[32m  OK  \x1b[0m] %s   " % ip, end='\r')
+#         return ip
+#     else:
+#         print("[\x1b[31m FAIL \x1b[0m] %s   " % ip, end='\r')
+#         return None
+#     # return ip if ping_result == 0 else None  # После отладки восстановить
+#
+#
+# def multi_process_ping(network="192.168.86", ip_start=1, ip_end=100):
+#     # В 3.5 раза быстрее обычного пинга
+#     ip_list_for_ping = []
+#
+#     for octet in range(ip_start, ip_end):
+#         ip_list_for_ping.append(network + '.' + str(octet))
+#
+#     ping_process = multiprocessing.dummy.Pool()
+#     result = ping_process.map(ping_test, ip_list_for_ping)
+#     ping_process.close()
+#     ping_process.join()
+#
+#     list_of_accessible_ip = [ip for ip in result if ip is not None]
+#
+#     print("Доступные хосты из диапазона: %s.%s->%s" % (network, ip_start, ip_end))  # Для отладки
+#     return list_of_accessible_ip  # Возврат списока доступных хостов
+#
+#
+# # Функции для получения хостнейма в тестовом режиме
+# def snmp_getcmd(community, ip, port, oid):
+#     snmp_string = next(getCmd(SnmpEngine(),
+#                    CommunityData(community),
+#                    UdpTransportTarget((ip, port)),
+#                    ContextData(),
+#                    ObjectType(ObjectIdentity(oid))))
+#     return snmp_string
+#
+#
+# def snmp_get_next(community, ip, port, oid):
+#     errorIndication, errorStatus, errorIndex, varBinds = next(snmp_getcmd(community, ip, port, oid))
+#     for name, val in varBinds:
+#         return (val.prettyPrint())
+######################################################################################################
 
 
 if __name__ == '__main__':
@@ -1093,7 +1147,7 @@ if __name__ == '__main__':
         print(help_and_about()[0])
 
     except KeyboardInterrupt:
-        print()
+        print('   ')
 
     except EOFError:
-        print()
+        print('   ')
