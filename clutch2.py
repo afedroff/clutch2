@@ -12,10 +12,10 @@ import pyperclip
 import http.client
 import urllib.error
 import urllib.request
-import multiprocessing
-import multiprocessing.dummy
-
-from pysnmp.hlapi import *
+# import multiprocessing
+# import multiprocessing.dummy
+#
+# from pysnmp.hlapi import *
 from abc import ABC
 from html.parser import HTMLParser
 
