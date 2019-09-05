@@ -1147,7 +1147,8 @@ if __name__ == '__main__':
         print(help_and_about()[0])
 
     except KeyboardInterrupt:
-        print('   ')
+        print(' ' * 50)
 
     except EOFError:
-        print('   ')
+        print(' ' * 50)
+
