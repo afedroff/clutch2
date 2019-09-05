@@ -15,9 +15,9 @@ import urllib.request
 import multiprocessing
 import multiprocessing.dummy
 
+from html.parser import HTMLParser
 from pysnmp.hlapi import *
 from abc import ABC
-from html.parser import HTMLParser
 
 try:
     import colorama
@@ -723,14 +723,16 @@ def main():
     help_cycle = help_and_about()[2]
 
     while True:
-        if len(sys.argv) == 1:  # если аргумент 1
+        # Если аргумент 1
+        if len(sys.argv) == 1:
             print("Usage: clutch [FILE]")
             print("Usage: clutch [FILE] [-f find] [-s SSH] [-t table] [-w write] [-F flush]")
             print('\n-h, --help  справка')
             print('-v, --version  версия\n')
             break
 
-        elif len(sys.argv) == 2:  # если аргументов 2 (понеслась жара)
+        # Если аргументов 2
+        elif len(sys.argv) == 2:
             if sys.argv[1] == '-h' or sys.argv[1] == '--help':
                 print(help_me)
                 break
@@ -940,7 +942,8 @@ def main():
                     print(help_me)
                     break
 
-        elif len(sys.argv) == 3:  # Если аргументов 3
+        # Если аргументов 3
+        elif len(sys.argv) == 3:
             if sys.argv[2] == '-f' or sys.argv[2] == '--find':  # Запуск программы в режиме поиска
                 os.system('clear')
                 name_of_file = sys.argv[1]
@@ -1037,7 +1040,8 @@ def main():
                 print(help_me)
                 break
 
-        elif len(sys.argv) == 4:  # Если аргументов 4
+        # Если аргументов 4
+        elif len(sys.argv) == 4:
             name_of_file = sys.argv[1]
 
             if sys.argv[2] == '-f' or sys.argv[2] == '--find':
@@ -1084,7 +1088,8 @@ def main():
                 print(help_me)
                 break
 
-        elif len(sys.argv) > 4:  # Использование не более 4-х аргументов
+        # Использование не более 4-х аргументов
+        elif len(sys.argv) > 4:
             print(help_me)
             break
 
@@ -1093,7 +1098,8 @@ def main():
         input()
 
 
-#####################################################################################################
+
+# Системный ping
 def ping_test(ip):
     ping_result = os.system("ping -w 1 -c 4 -i 0.2 %s > /dev/null" % ip)
     if ping_result == 0:
@@ -1104,9 +1110,8 @@ def ping_test(ip):
         return None
     # return ip if ping_result == 0 else None  # После отладки восстановить
 
-
+# В 3.5 раза быстрее обычного пинга
 def multi_process_ping(network="192.168.86", ip_start=1, ip_end=100):
-    # В 3.5 раза быстрее обычного пинга
     ip_list_for_ping = []
 
     for octet in range(ip_start, ip_end):
@@ -1122,7 +1127,6 @@ def multi_process_ping(network="192.168.86", ip_start=1, ip_end=100):
     print("Доступные хосты из диапазона: %s.%s->%s" % (network, ip_start, ip_end))  # Для отладки
     return list_of_accessible_ip  # Возврат списока доступных хостов
 
-
 # Функции для получения хостнейма в тестовом режиме
 def snmp_getcmd(community, ip, port, oid):
     snmp_string = next(getCmd(SnmpEngine(),
@@ -1132,12 +1136,12 @@ def snmp_getcmd(community, ip, port, oid):
                    ObjectType(ObjectIdentity(oid))))
     return snmp_string
 
-
+# Поработать с snmp трапами, упростить
 def snmp_get_next(community, ip, port, oid):
     errorIndication, errorStatus, errorIndex, varBinds = next(snmp_getcmd(community, ip, port, oid))
     for name, val in varBinds:
         return (val.prettyPrint())
-#####################################################################################################
+
 
 
 if __name__ == '__main__':
