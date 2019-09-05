@@ -677,6 +677,7 @@ def mac_check(mac):
 
         print("%s Производитель оборудования      : %s" % (symbol_good, obj['result']['company']))
         print("%s Юридический адрес производителя : %s" % (symbol_good, obj['result']['address']))
+        print(horizontal_equal_line)
 
     except KeyError:
         print("%s MAC-адрес указан неверно!" % symbol_bad)
@@ -1140,7 +1141,6 @@ def snmp_get_next(community, ip, port, oid):
 
 if __name__ == '__main__':
     try:
-        logging("Запуск clutch2")
         main()
 
     except IndexError:
