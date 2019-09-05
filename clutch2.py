@@ -26,7 +26,7 @@ try:
 except ModuleNotFoundError:
     pass
 
-PROGRAM_VERSION = '4.0.2 alpha'
+PROGRAM_VERSION = '4.0'
 
 symbol_good = "\x1b[92m[+]\x1b[0m"
 symbol_bad = "\x1b[91m[!]\x1b[0m"
@@ -1137,7 +1137,7 @@ def main():
 #         return (val.prettyPrint())
 ######################################################################################################
 
-
+# Переход в стабильную ветку
 if __name__ == '__main__':
     try:
         logging("Запуск clutch2")
