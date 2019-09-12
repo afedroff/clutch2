@@ -156,7 +156,7 @@ def dev_list(file_name):
         return file_line
 
     else:
-        no_file = input("%s Файл %s перемещен или удален! Создать новый? [y/n]: " % (symbol_question, file_name))
+        no_file = input("%s Файл %s перемещен или удален! Создать новый? [y/n]: " % (symbol_question, file_nam))
 
         if no_file == 'y':
             with open(file_name, 'w+') as new_file:
