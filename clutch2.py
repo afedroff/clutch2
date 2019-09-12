@@ -100,7 +100,7 @@ IP адрес | Название устройства | Логин | Парол�
     version_string = '''
     MIT License
 
-    Copyright (c) 2019 citizen0ne
+    Copyright (c) %s citizen0ne
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
