@@ -501,7 +501,7 @@ def login_check(login):
     connection_speed = []  # Скорость соединения
     file_with_link = "/usr/local/clutch/llink"  # Путь у файлу с ссылкой для проверки логина
 
-    print("%s\n%s Проверяю логин \033[90m%s\x1b[0m, ждите..." %
+    print("%s\n%s Проверка логина \033[90m%s\x1b[0m, ждите\033[5m...\33[0m" %
           (horizontal_equal_line, symbol_unknown, login), end='\r')
 
     # Обе части ссылки для проверки логина берем из файла
@@ -543,8 +543,13 @@ def login_check(login):
             if "Framed-IP-address :" in html_split[line]:  # Список IP адресов
                 ip_address.append(html_split[line].split(" : ")[1])
 
-            if "NAS-Port-Id" in html_split[line]:  # Откуда карточка вышла в интернет
-                nas_port_id.append(html_split[line][12:].split("#")[1])
+
+
+            # Откуда карточка вышла в интернет
+            if "NAS-Port-Id" in html_split[line] or "Agent-Circuit-Id" in html_split[line]:
+                authorisation_line = html_split[line].split(' : ')[1]
+                if len(authorisation_line):
+                    nas_port_id.append(authorisation_line)
 
     else:
         print(horizontal_equal_line)
@@ -553,10 +558,11 @@ def login_check(login):
     # Проверка и вывод количества попыток авторизации и правильности введенного пароля
     for attempt in range(len(list_of_auth)):
         if "Login OK:" in list_of_auth[attempt] or "Login incorrect" in list_of_auth[attempt]:
-            day = str(list_of_auth[attempt][:41]).split(" ")[3]
-            month = str(list_of_auth[attempt][:41]).split(" ")[1]
-            year = str(list_of_auth[attempt][:41]).split(" ")[5]
-            clock = str(list_of_auth[attempt][:41]).split(" ")[4]
+            date_auth_string = str(list_of_auth[attempt]).split(' : ')
+            day = date_auth_string[0].split()[2]
+            month = date_auth_string[0].split()[1]
+            year = date_auth_string[0].split()[4]
+            clock = date_auth_string[0].split()[3]
             port = str(list_of_auth[attempt]).split('port')[1][:-1]
 
             if "Login OK:" in list_of_auth[attempt]:
@@ -1098,8 +1104,7 @@ def main():
         input()
 
 
-
-
+#########################################################
 # Системный ping
 def ping_test(ip):
     ping_result = os.system("ping -w 1 -c 4 -i 0.2 %s > /dev/null" % ip)
@@ -1142,20 +1147,30 @@ def snmp_get_next(community, ip, port, oid):
     errorIndication, errorStatus, errorIndex, varBinds = next(snmp_getcmd(community, ip, port, oid))
     for name, val in varBinds:
         return (val.prettyPrint())
-
-
+#########################################################
 
 
 if __name__ == '__main__':
-    main()
-    # try:
-    #     main()
-    #
-    # except IndexError:
-    #     print(help_and_about()[0])
-    #
-    # except KeyboardInterrupt:
-    #     print(' ' * 50)
-    #
-    # except EOFError:
-    #     print(' ' * 50)
+    # login_check('77860798373')
+    # login_check('77865553565')
+    # login_check('77865509017')
+
+    # login_check('77860798372')
+    # login_check('77860798373')
+    # login_check('77865553565')
+    # login_check('77865509017')
+    # login_check('77865956986')
+    # login_check('77865489752')
+    # login_check('77865534653')
+
+    try:
+        main()
+
+    except IndexError:
+        print(help_and_about()[0])
+
+    except KeyboardInterrupt:
+        print(' ' * 50)
+
+    except EOFError:
+        print(' ' * 50)
