@@ -1099,7 +1099,6 @@ def main():
 
 
 
-
 # Системный ping
 def ping_test(ip):
     ping_result = os.system("ping -w 1 -c 4 -i 0.2 %s > /dev/null" % ip)
