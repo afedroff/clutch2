@@ -26,7 +26,7 @@ try:
 except ModuleNotFoundError:
     pass
 
-PROGRAM_VERSION = '4.0.3b'
+PROGRAM_VERSION = '4.0.4b'
 
 symbol_good = "\x1b[92m[+]\x1b[0m"
 symbol_bad = "\x1b[91m[!]\x1b[0m"
@@ -1151,18 +1151,6 @@ def snmp_get_next(community, ip, port, oid):
 
 
 if __name__ == '__main__':
-    # login_check('77860798373')
-    # login_check('77865553565')
-    # login_check('77865509017')
-
-    # login_check('77860798372')
-    # login_check('77860798373')
-    # login_check('77865553565')
-    # login_check('77865509017')
-    # login_check('77865956986')
-    # login_check('77865489752')
-    # login_check('77865534653')
-
     try:
         main()
 
