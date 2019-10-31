@@ -367,7 +367,7 @@ def search_device(searching_string, file_name):  # Поиск устройств
 
 
 def telnet_or_ssh_this(num_in, file_name, ssh=False):  # Для подключения к устройству
-    print(horizontal_equal_line)
+    # print(horizontal_equal_line)
     try:
         num = int(num_in)  # Порядковый номер устройства в списке
         l_p_e = list()  # Список логин/пароль/enable
@@ -433,7 +433,7 @@ def telnet_or_ssh_this(num_in, file_name, ssh=False):  # Для подключе
                     print(ready_string)
 
             if ssh:
-                print(horizontal_equal_line)
+                # print(horizontal_equal_line)
                 logging("Соединение SSH: \"%s %s\" ОТКРЫТО" % (ip_address, name_of_device))
                 if len(dev_list(file_name)[num - 1].split(' | ')) == 5:
                     if ((dev_list(file_name)[num - 1].split(' | ')[4][5:]).isdigit()) \
@@ -442,7 +442,7 @@ def telnet_or_ssh_this(num_in, file_name, ssh=False):  # Для подключе
                         ssh_port = dev_list(file_name)[num - 1].split(' | ')[4][5:]
 
                         if login != '-' and password != '-':
-                            print(horizontal_equal_line)
+                            # print(horizontal_equal_line)
                             print('%s ssh %s@%s -p %s\n' % (symbol_good, login, ip_address, ssh_port))
                             os.system('ssh %s@%s -p %s' % (login, ip_address, ssh_port))
 
@@ -837,9 +837,9 @@ def main():
                             name_of_device = check_file_string(num_of_device, sys.argv[1])[1]
 
                             logging("Проверка ping устройства: \"%s %s\"" % (ip_address, name_of_device))
-                            print(horizontal_equal_line)
-                            print('%s ping %s' % (symbol_good, ip_address))
+                            print('%s ping %s' % (symbol_unknown, ip_address))
                             os.system('ping %s -i 0.2 | grep time=' % ip_address)
+                            print(end='\r')
 
                         except IndexError:
                             print(help_cycle)
@@ -1147,14 +1147,15 @@ def snmp_get_next(community, ip, port, oid):
 
 
 if __name__ == '__main__':
-    try:
-        main()
-
-    except IndexError:
-        print(help_and_about()[0])
-
-    except KeyboardInterrupt:
-        print(' ' * 50)
-
-    except EOFError:
-        print(' ' * 50)
+    main()
+    # try:
+    #     main()
+    #
+    # except IndexError:
+    #     print(help_and_about()[0])
+    #
+    # except KeyboardInterrupt:
+    #     print(' ' * 50)
+    #
+    # except EOFError:
+    #     print(' ' * 50)
